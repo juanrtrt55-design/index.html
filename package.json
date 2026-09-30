@@ -1,0 +1,17 @@
+{
+  "name": "carplayer-pro",
+  "version": "1.0.0",
+  "description": "CarPlayer Pro + Soundboard Multi-Banco",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Sin paso de build, usando HTML estático'"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}
