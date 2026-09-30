@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CarPlayer Pro + Soundboard Multi-Banco</title>
   
-  <!-- SCRIPT NATIVO DE CAPACITOR (Indispensable para funciones Android como exitApp) -->
+  <!-- SCRIPT NATIVO DE CAPACITOR -->
   <script src="capacitor.js"></script>
   
   <!-- Tailwind CSS CDN -->
@@ -43,9 +43,9 @@
     }
 
     .exit-gradient-bg {
-      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #000000);
       background-size: 400% 400%;
-      animation: gradient-bg 4s ease infinite;
+      animation: gradient-bg 6s ease infinite;
     }
 
     .spinning-disk {
@@ -310,12 +310,14 @@
 
   </div>
 
-  <!-- PANTALLA DE SALIDA ANIMADA "GOOD BYE" CON CARITA -->
+  <!-- PANTALLA DE SALIDA ANIMADA "GOOD BYE" CON IMAGEN Y SONIDO -->
   <div id="exit-screen" class="fixed inset-0 z-[100] exit-gradient-bg flex flex-col items-center justify-center hidden text-center px-4">
-    <div class="text-7xl sm:text-9xl mb-4 animate-bounce">
-      (⁠;⁠;⁠)⁠/⁠~
+    <!-- Imagen real de despedida subida al repositorio -->
+    <div class="w-44 h-44 sm:w-56 sm:h-56 mb-4 rounded-full overflow-hidden border-4 border-purple-500/80 shadow-[0_0_30px_rgba(168,85,247,0.5)] animate-bounce">
+      <img src="adios.jpg" alt="Goodbye" class="w-full h-full object-cover">
     </div>
-    <h1 class="text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-widest uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] animate-pulse select-none">
+    
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-widest uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] animate-pulse select-none">
       GOOD BYE
     </h1>
     <p class="text-white/80 text-sm sm:text-lg font-medium mt-2 tracking-wide">Cerrando aplicación...</p>
@@ -324,6 +326,17 @@
   <audio id="audio-player" crossorigin="anonymous"></audio>
 
   <script>
+    // CONFIGURACIÓN DE SEGURIDAD PARA CLOUDFLARE WORKER
+    const APP_SECRET_KEY = "CarPlayerProSecretKey123";
+
+    async function secureFetch(url, options = {}) {
+      options.headers = {
+        ...options.headers,
+        'X-App-Request': APP_SECRET_KEY
+      };
+      return fetch(url, options);
+    }
+
     function exitApp() {
       try {
         if (typeof pauseTrack === 'function') pauseTrack();
@@ -337,6 +350,14 @@
       if (mainContainer) mainContainer.style.display = 'none';
       if (exitBtn) exitBtn.style.display = 'none';
       if (exitScreen) exitScreen.classList.remove('hidden');
+
+      // Reproducción del audio de despedida
+      try {
+        const goodbyeAudio = new Audio('_Goodbye_Meme_Sound_Effect_MP3_256kbp.mp3');
+        goodbyeAudio.play().catch(err => console.log("Audio autoplay restringido:", err));
+      } catch (err) {
+        console.warn("No se pudo cargar el audio de despedida:", err);
+      }
 
       setTimeout(() => {
         // Soporte para Capacitor App Plugin nativo
@@ -364,7 +385,7 @@
           return;
         }
         window.close();
-      }, 2500);
+      }, 3000);
     }
 
     lucide.createIcons();
@@ -1020,7 +1041,7 @@
       const GITHUB_API_URL = `https://api.github.com/repos/${USER}/${repoName}/contents/`;
 
       try {
-        const response = await fetch(GITHUB_API_URL);
+        const response = await secureFetch(GITHUB_API_URL);
         if (!response.ok) throw new Error("Error al acceder al repositorio");
 
         const files = await response.json();
