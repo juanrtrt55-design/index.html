@@ -1,6 +1,12 @@
 {
-  "appId": "com.carplayer.app",
+  "appId": "com.tuempresa.carplayer",
   "appName": "CarPlayer Pro",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "server": {
+    "url": "https://music.gatito1.workers.dev/",
+    "cleartext": true
+  },
+  "android": {
+    "appendUserAgent": " CarPlayerProNativeApp"
+  }
 }
