@@ -303,7 +303,7 @@
         <button class="btn-bank" onclick="changeBank(1)"></button>
         <button class="btn-bank" onclick="changeBank(2)"></button>
         <button class="btn-bank" onclick="changeBank(3)"></button>
-        <button class="btn-bank" onclick="changeBank(5)"></button>
+        <button class="btn-bank" onclick="changeBank(4)"></button>
         <button class="btn-bank" onclick="changeBank(5)"></button>
       </div>
     </section>
@@ -327,7 +327,6 @@
         if (activePlayer) { activePlayer.pause(); }
       } catch (e) {}
 
-      // Reproducir sonido Goodbye
       try {
         const goodbyeAudio = new Audio('https://raw.githubusercontent.com/juanrtrt55-design/Audio-/refs/heads/main/_Goodbye__Meme_Sound_Effect_MP3_256kbps.mp3');
         goodbyeAudio.volume = 0.9;
@@ -343,7 +342,6 @@
       if (exitScreen) exitScreen.classList.remove('hidden');
 
       setTimeout(() => {
-        // Soporte para Capacitor App Plugin nativo
         if (window.Capacitor && window.Capacitor.Plugins) {
           const AppPlugin = window.Capacitor.Plugins.App || window.Capacitor.Plugins.AppPlugin;
           if (AppPlugin && typeof AppPlugin.exitApp === 'function') {
@@ -939,9 +937,8 @@
     renderPlaylist();
 
     /* ----------------------------------------------------
-       LÓGICA SOUNDBOARD MULTI-BANCO DE SONIDOS
+       LÓGICA SOUNDBOARD MULTI-BANCO DE SONIDOS (PROXIFIED)
     ---------------------------------------------------- */
-    const USER = "Juancito221";
     const container = document.getElementById('soundboard');
     const swipeArea = document.getElementById('swipeArea');
     const bankButtons = document.querySelectorAll('.btn-bank');
@@ -1021,22 +1018,19 @@
         return;
       }
 
-      const GITHUB_API_URL = `https://api.github.com/repos/${USER}/${repoName}/contents/`;
+      // CAMBIO CLAVE: Solicitamos al Worker en lugar de a GitHub directamente
+      const PROXY_URL = `/api/sounds?bank=${index}`;
 
       try {
-        const response = await fetch(GITHUB_API_URL);
-        if (!response.ok) throw new Error("Error al acceder al repositorio");
+        const response = await fetch(PROXY_URL);
+        if (!response.ok) throw new Error("Error al acceder al servidor");
 
-        const files = await response.json();
-        const audioFiles = files.filter(file => 
-          file.type === "file" && /\.(mp3|wav|ogg|m4a|aac)$/i.test(file.name)
-        );
-
+        const audioFiles = await response.json();
         bankCache[repoName] = audioFiles;
         renderBoard(audioFiles);
 
       } catch (error) {
-        console.error("Error al cargar audios de GitHub:", error);
+        console.error("Error al cargar audios:", error);
         renderBoard([]);
       }
     }
