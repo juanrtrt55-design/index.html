@@ -3,10 +3,13 @@
   "appName": "CarPlayer Pro",
   "webDir": "www",
   "server": {
-    "url": "https://music.gatito1.workers.dev/",
+    "url": "https://dk.gatito1.workers.dev/",
     "cleartext": true
   },
   "android": {
+    "appendUserAgent": " CarPlayerProNativeApp"
+  },
+  "ios": {
     "appendUserAgent": " CarPlayerProNativeApp"
   }
 }
