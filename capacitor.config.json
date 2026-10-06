@@ -3,7 +3,7 @@
   "appName": "CarPlayer Pro",
   "webDir": "www",
   "server": {
-    "url": "https://vip3.gatito1.workers.dev/",
+    "url": "https://vip4.gatito1.workers.dev/",
     "cleartext": true
   },
   "android": {
