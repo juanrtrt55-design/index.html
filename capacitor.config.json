@@ -7,9 +7,9 @@
     "cleartext": true
   },
   "android": {
-    "appendUserAgent": " CarPlayerApp"
+    "appendUserAgent": " CarPlayerProNativeApp"
   },
   "ios": {
-    "appendUserAgent": " CarPlayerApp"
+    "appendUserAgent": " CarPlayerProNativeApp"
   }
 }
