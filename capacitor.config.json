@@ -1,5 +1,5 @@
 {
   "appId": "com.cybertv.app",
   "appName": "Cyber TV",
-  "webDir": "."
+  "webDir": "www"
 }
