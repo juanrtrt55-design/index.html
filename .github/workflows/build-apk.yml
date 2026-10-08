@@ -23,17 +23,19 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Instalar dependencias
-        run: npm install
+      - name: Instalar dependencias y Capacitor
+        run: |
+          npm install
+          npm install @capacitor/core @capacitor/cli @capacitor/android hls.js
 
       - name: Preparar carpeta web (www)
         run: |
           mkdir -p www
           cp index.html www/
 
-      - name: Inicializar y Sincronizar Capacitor
+      - name: Añadir plataforma Android y Sincronizar
         run: |
-          npx cap add android --no-pack-manager || true
+          npx cap add android
           npx cap sync android
 
       - name: Otorgar permisos a Gradle
