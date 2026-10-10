@@ -2,6 +2,9 @@
   "appId": "com.tuempresa.cybertv",
   "appName": "Cyber TV Player",
   "webDir": "www",
+  "android": {
+    "appendUserAgent": " CarPlayerApp"
+  },
   "server": {
     "url": "https://tv.gatito1.workers.dev/",
     "cleartext": true
