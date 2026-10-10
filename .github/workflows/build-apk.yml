@@ -1,47 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarPlayer Pro</title>
+</head>
+<body style="background: #020617; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif;">
+    <div style="text-align: center;">
+        <p style="font-size: 14px; color: #94a3b8;">Cargando...</p>
+    </div>
+</body>
+</html>
+
+Buildapk.yml
+
 name: Compilar APK Android
 
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar código del repositorio
+      - name: Descargar codigo del repositorio
         uses: actions/checkout@v4
 
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Configurar Java JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '17'
 
-      - name: Instalar dependencias y Capacitor
-        run: |
-          npm install
-          npm install @capacitor/core @capacitor/cli @capacitor/android hls.js
+      - name: Instalar dependencias
+        run: npm install
 
       - name: Preparar carpeta web (www)
         run: |
           mkdir -p www
           cp index.html www/
 
-      - name: Añadir plataforma Android y Sincronizar
+      - name: Inicializar y Sincronizar Capacitor
         run: |
           npx cap add android
+          npx cap copy android
           npx cap sync android
 
-      - name: Otorgar permisos a Gradle
+      - name: Parche pantalla completa (edge-to-edge)
         run: |
-          cd android
-          chmod +x gradlew
+          cat > android/app/src/main/java/com/tuempresa/carplayer/MainActivity.kt << 'EOF'
+          package com.tuempresa.carplayer
+
+          import android.graphics.Color
+          import android.os.Bundle
+          import androidx.core.view.ViewCompat
+          import androidx.core.view.WindowCompat
+          import androidx.core.view.WindowInsetsCompat
+          import com.getcapacitor.BridgeActivity
+
+          class MainActivity : BridgeActivity() {
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+
+                  // Edge-to-edge: la app dibuja bajo las barras de estado y navegacion
+                  WindowCompat.setDecorFitsSystemWindows(window, false)
+                  window.statusBarColor = Color.TRANSPARENT
+                  window.navigationBarColor = Color.TRANSPARENT
+
+                  // Aplicar margenes del sistema al WebView para que nada quede tapado
+                  ViewCompat.setOnApplyWindowInsetsListener(bridge.webView) { v, insets ->
+                      val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                      v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+                      insets
+                  }
+              }
+          }
+          EOF
+
+          sed -i 's#android:exported="true"#android:exported="true"\n            android:windowLayoutInDisplayCutoutMode="shortEdges"#' android/app/src/main/AndroidManifest.xml
+
+      - name: Otorgar permisos a Gradle
+        run: chmod +x android/gradlew
 
       - name: Compilar APK Debug
         run: |
@@ -51,5 +100,5 @@ jobs:
       - name: Subir APK como artefacto de descarga
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: CarPlayerPro-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
