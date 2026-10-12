@@ -29,7 +29,7 @@ jobs:
 
     - name: Initialize Capacitor Android
       run: |
-        npx cap init "CarPlayer Pro" "com.tuempresa.carplayer" --web-dir www --npm-client npm
+        npx cap init "CarPlayer Pro" "com.tuempresa.carplayer" --web-dir www
         npx cap add android
         npx cap sync android
 
