@@ -3,7 +3,13 @@
   "appName": "CarPlayer Pro",
   "webDir": "www",
   "server": {
-    "url": "https://reproductorvip.gatito1.workers.dev/
+    "url": "https://reproductorvip.gatito1.workers.dev//",
     "cleartext": true
+  },
+  "android": {
+    "appendUserAgent": "CarPlayerApp"
+  },
+  "ios": {
+    "appendUserAgent": "CarPlayerApp"
   }
 }
