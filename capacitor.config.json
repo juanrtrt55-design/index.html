@@ -1,12 +1,9 @@
 {
-  "appId": "com.tuempresa.cybertv",
-  "appName": "Cyber TV Player",
+  "appId": "com.tuempresa.carplayer",
+  "appName": "CarPlayer Pro",
   "webDir": "www",
-  "android": {
-    "appendUserAgent": " CarPlayerApp"
-  },
   "server": {
-    "url": "https://tv.gatito1.workers.dev/",
+    "url": "https://reproductorvip.gatito1.workers.dev/?key=CARPLAYER_PRO_SECURE_KEY_2026_XYZ",
     "cleartext": true
   }
 }
