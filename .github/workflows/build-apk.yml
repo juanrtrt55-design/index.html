@@ -27,10 +27,18 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Initialize Capacitor Android
+    - name: Prepare Web Directory
       run: |
-        npx cap init "CarPlayer Pro" "com.tuempresa.carplayer" --web-dir www
-        npx cap add android
+        mkdir -p www
+        if [ ! -f www/index.html ]; then
+          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CarPlayer Pro</title></head><body style="background:black;color:white;"><p>Cargando CarPlayer Pro...</p></body></html>' > www/index.html
+        fi
+
+    - name: Initialize and Sync Capacitor
+      run: |
+        if [ ! -d "android" ]; then
+          npx cap add android
+        fi
         npx cap sync android
 
     - name: Build APK with Gradle
