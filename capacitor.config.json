@@ -3,7 +3,7 @@
   "appName": "CarPlayer Pro",
   "webDir": "www",
   "server": {
-    "url": "https://reproductorvip.gatito1.workers.dev/?key=CARPLAYER_PRO_SECURE_KEY_2026_XYZ",
+    "url": "https://reproductorvip.gatito1.workers.dev/
     "cleartext": true
   }
 }
