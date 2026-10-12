@@ -1,10 +1,8 @@
-name: Compilar APK Android
+name: Build Android APK
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -12,59 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar codigo del repositorio
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
 
-      - name: Configurar Java JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+    - name: Install Dependencies
+      run: npm install
 
-      - name: Instalar dependencias
-        run: npm install
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      - name: Ejecutar script de build
-        run: npm run build
+    - name: Initialize Capacitor Android
+      run: |
+        npx cap init "CarPlayer Pro" "com.tuempresa.carplayer" --web-dir www --npm-client npm
+        npx cap add android
+        npx cap sync android
 
-      - name: Inicializar y Sincronizar Capacitor
-        run: |
-          npx cap add android
-          npx cap copy android
-          npx cap sync android
+    - name: Build APK with Gradle
+      run: |
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug
 
-      - name: Parche pantalla completa (edge-to-edge)
-        run: |
-          cat > android/app/src/main/java/com/tuempresa/cybertv/MainActivity.kt << 'EOF'
-          package com.tuempresa.cybertv
-
-          import android.os.Bundle
-          import androidx.core.view.WindowCompat
-          import com.getcapacitor.BridgeActivity
-
-          class MainActivity : BridgeActivity() {
-              override fun onCreate(savedInstanceState: Bundle?) {
-                  super.onCreate(savedInstanceState)
-                  WindowCompat.setDecorFitsSystemWindows(window, false)
-              }
-          }
-          EOF
-
-      - name: Otorgar permisos a Gradle
-        run: chmod +x android/gradlew
-
-      - name: Compilar APK de Depuracion (Debug)
-        run: |
-          cd android
-          ./gradlew assembleDebug
-
-      - name: Subir APK generado
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug-apk
+        path: android/app/build/outputs/apk/debug/app-debug.apk
